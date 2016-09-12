@@ -1,0 +1,27 @@
+#import os
+#os.getcwd()
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import time
+import pandas as pd
+
+driver = webdriver.Chrome(r"C:\Python27\Lib\site-packages\selenium\webdriver\chrome\chromedriver")
+driver.get("https://www.canadapost.ca/cpo/mc/personal/postalcode/fpc.jsf")
+searchbar = driver.find_element_by_id('addressComplete')
+searchbar.click()
+searchbar.send_keys('a')
+time.sleep(3)
+
+data = driver.find_elements_by_class_name('pcalist')[2]
+table = data.find_elements_by_class_name('pcaitem')
+df = pd.DataFrame(index = range(len(table)),columns = ['Address','City','State','Pin Code'])
+
+for i in range(len(table)):
+    add = table[i].text
+    address,other = add.split('\n')
+    city,state,pin = map(lambda x: x.strip(),other.split(','))
+    df.ix[i,:] = [address,city,state,pin]
+
+df.to_csv('output.csv',mode = 'w',index = False)
+driver.close()
+driver.quit()
