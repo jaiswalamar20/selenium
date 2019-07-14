@@ -1,2 +1,2 @@
 # selenium
-using selenium for data extraction
+use of selenium for data extraction(scrapping)
